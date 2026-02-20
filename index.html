@@ -491,6 +491,16 @@ html,body{
   background:var(--b);
   justify-content:flex-start;
   padding:0;
+  overflow:hidden;
+}
+
+.bmenu-scroll{
+  width:100%;
+  height:100%;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  display:flex;
+  flex-direction:column;
 }
 
 .bmenu-back{
@@ -984,6 +994,7 @@ html,body{
      BREATH MENU
 ═══════════════════════════════════════ -->
 <div class="screen" id="s-breath-menu">
+<div class="bmenu-scroll">
   <div class="bmenu-back">
     <button class="back-btn" onclick="show('home')">← VOLVER</button>
     <div class="bmenu-eyebrow">PROTOCOLO RESPIRATORIO</div>
@@ -1038,7 +1049,8 @@ html,body{
       </div>
     </button>
   </div>
-</div>
+</div><!-- end bmenu-scroll -->
+</div><!-- end s-breath-menu -->
 
 <!-- ═══════════════════════════════════════
      BREATHING SCREEN
@@ -1452,39 +1464,34 @@ function rdRound(ctx,W,H){
     if(!RD.active) return;
     RD.phase='choice';
     rdRender(ctx,W,H);
-  },600);
+  },380);
 }
 
 function rdRender(ctx,W,H){
   ctx.clearRect(0,0,W,H);
   if(RD.phase==='show'){
-    // Rule reminder at top
-    ctx.font=`700 10px "Courier Prime"`;
+    // Huge digit — pure flash, no text
+    ctx.font=`900 220px "Bebas Neue"`;
     ctx.fillStyle='#080808';
-    ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('TOCA EL NÚMERO SIGUIENTE  (+1)',W/2,18);
-
-    // Big flashing digit
-    ctx.font=`900 190px "Bebas Neue"`;
-    ctx.fillStyle='#080808';
-    ctx.textBaseline='middle';
-    ctx.fillText(RD.shown,W/2,H*0.44);
-
-    ctx.font=`400 9px "Courier Prime"`;
-    ctx.fillStyle='#909090';
-    ctx.fillText('SI VES ' + RD.shown + ' → TOCA ' + RD.target,W/2,H*0.75);
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(RD.shown,W/2,H*0.45);
+    // Subtle rule bottom
+    ctx.font=`700 9px "Courier Prime"`;
+    ctx.fillStyle='#AAAAAA';
+    ctx.textBaseline='bottom';
+    ctx.fillText('+1',W/2,H-20);
 
   } else {
-    // Rule at top
-    ctx.font=`700 10px "Courier Prime"`;
-    ctx.fillStyle='#080808';
+    // Compact cue top
+    ctx.font=`900 11px "Courier Prime"`;
+    ctx.fillStyle='#AAAAAA';
     ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('Viste   ' + RD.shown + '   → ¿cuál es el siguiente?',W/2,18);
+    ctx.fillText('VISTE  ' + RD.shown + '  →  SIGUIENTE',W/2,16);
 
-    const bW=(W-40)/2-6, bH=84;
+    const bW=(W-40)/2-6, bH=92;
     const gapX=12, gapY=12;
     const startX=20;
-    const startY=H*0.20;
+    const startY=H*0.16;
 
     RD.btns=RD.opts.map((opt,i)=>{
       const col=i%2, row=Math.floor(i/2);
@@ -1497,7 +1504,7 @@ function rdRender(ctx,W,H){
       // Trap number (shown digit) gets subtle visual distinction — same color, no hint
       ctx.fillStyle='#F2F2F0';
       ctx.fillRect(btn.x,btn.y,btn.w,btn.h);
-      ctx.font=`900 58px "Bebas Neue"`;
+      ctx.font=`900 64px "Bebas Neue"`;
       ctx.fillStyle='#080808';ctx.textBaseline='middle';ctx.textAlign='center';
       ctx.fillText(btn.opt,btn.x+btn.w/2,btn.y+btn.h/2);
     }
@@ -1515,9 +1522,9 @@ function rdTap(tx,ty,W,H,ctx){
       document.getElementById('sv-c').textContent=pct+'%';
       // Highlight — show both trap and correct
       ctx.clearRect(0,0,W,H);
-      ctx.font=`700 10px "Courier Prime"`;
-      ctx.fillStyle='#080808';ctx.textAlign='center';ctx.textBaseline='top';
-      ctx.fillText('Viste   ' + RD.shown + '   → ¿cuál es el siguiente?',W/2,18);
+      ctx.font=`900 11px "Courier Prime"`;
+      ctx.fillStyle='#AAAAAA';ctx.textAlign='center';ctx.textBaseline='top';
+      ctx.fillText('VISTE  ' + RD.shown + '  →  SIGUIENTE',W/2,16);
       for(const b of RD.btns){
         const isChosen=b===btn;
         const isCorrect=b.opt===RD.target;
@@ -1525,7 +1532,7 @@ function rdTap(tx,ty,W,H,ctx){
         ctx.fillStyle=isCorrect?'#E8F5EE':isChosen&&!ok?'#FFF0F0':'#F2F2F0';
         ctx.fillRect(b.x,b.y,b.w,b.h);
         // Mark trap with small X overlay
-        ctx.font=`900 58px "Bebas Neue"`;
+        ctx.font=`900 64px "Bebas Neue"`;
         ctx.fillStyle=isCorrect?'#1A9952':isChosen&&!ok?'#D94030':'#909090';
         ctx.textBaseline='middle';ctx.textAlign='center';
         ctx.fillText(b.opt,b.x+b.w/2,b.y+b.h/2);
@@ -1535,7 +1542,7 @@ function rdTap(tx,ty,W,H,ctx){
           ctx.fillText('TRAMPA',b.x+b.w/2,b.y+b.h-10);
         }
       }
-      setTimeout(()=>{if(RD.active)rdRound(ctx,W,H);},420);
+      setTimeout(()=>{if(RD.active)rdRound(ctx,W,H);},280);
       return;
     }
   }
