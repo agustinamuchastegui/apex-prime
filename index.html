@@ -60,8 +60,10 @@ html,body{
 ════════════════════════════════ */
 #s-home{
   background:var(--b);
-  justify-content:space-between;
+  justify-content:flex-start;
   padding:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
 .home-top{
@@ -100,6 +102,7 @@ html,body{
   display:flex;
   flex-direction:column;
   gap:10px;
+  flex-shrink:0;
 }
 
 .mod-card{
@@ -186,7 +189,7 @@ html,body{
 
 /* Start button — appears when all done */
 .home-start-wrap{
-  width:100%;padding:0 28px 52px;
+  width:100%;padding:16px 28px 56px;
   flex-shrink:0;
 }
 
@@ -211,6 +214,7 @@ html,body{
   justify-content:flex-start;
   padding:20px 28px 0;
   width:100%;
+  flex-shrink:0;
 }
 .hpd{
   width:5px;height:5px;border-radius:50%;
@@ -809,7 +813,7 @@ html,body{
       <button class="home-breath-btn" onclick="show('breath-menu')">
         <div class="hbb-left">
           <span class="hbb-dot"></span>
-          RESPIRACIÓN
+          EJERCICIOS DE RESPIRACIÓN
         </div>
         <span class="hbb-arrow">→</span>
       </button>
