@@ -62,8 +62,17 @@ html,body{
   background:var(--b);
   justify-content:flex-start;
   padding:0;
+  overflow:hidden;
+}
+
+.home-scroll{
+  width:100%;
+  height:100%;
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
 .home-top{
@@ -729,6 +738,7 @@ html,body{
      HOME
 ═══════════════════════════════════════ -->
 <div class="screen active" id="s-home">
+<div class="home-scroll">
 
   <div class="home-top">
     <div class="home-wordmark">APEX<em>PRIME</em></div>
@@ -819,7 +829,8 @@ html,body{
       </button>
     </div>
   </div>
-</div>
+</div><!-- end home-scroll -->
+</div><!-- end s-home -->
 
 <!-- ═══════════════════════════════════════
      COUNTDOWN
