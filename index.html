@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>APEX PRIME</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime:wght@400;700&family=Oswald:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --w:#F8F8F6;
+  --b:#080808;
+  --g1:#E4E4E2;
+  --g2:#ADADAB;
+  --g3:#6E6E6C;
+  --acc:#080808;
+  --red:#C8001A;
+  --red-dim:#8C0012;
+  --ok:#1A9952;
+  --err:#C8001A;
+  --orange:#C8001A;
+  --amber:#C8001A;
+  --dim:#6E6E6C;
+  --sub:rgba(255,255,255,0.38);
+  --sub2:rgba(255,255,255,0.20);
+  --on-light:#5A5A58;
+  --terracotta:#D4541C;
+  --forest:#1E7A52;
+  --font-d:'Bebas Neue',sans-serif;
+  --font-m:'Courier Prime',monospace;
+  --font-c:'Oswald',sans-serif;
+}
+
+html,body{
+  width:100%;height:100%;
+  background:var(--w);color:var(--b);
+  font-family:var(--font-c);
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+  user-select:none;
+  touch-action:manipulation;
+}
+
+/* ── SCREENS ── */
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+.screen.active{opacity:1;pointer-events:all;}
+
+/* ════════════════════════════════
+   HOME
+════════════════════════════════ */
+#s-home{
+  background:var(--b);
+  justify-content:space-between;
+  padding:0;
+}
+
+.home-top{
+  width:100%;
+  padding:52px 28px 0;
+  flex-shrink:0;
+}
+
+.home-wordmark{
+  font-family:var(--font-d);
+  font-size:72px;
+  line-height:0.88;
+  color:var(--w);
+  letter-spacing:0.01em;
+}
+.home-wordmark em{
+  font-style:normal;
+  display:block;
+  color:transparent;
+  -webkit-text-stroke:1.2px rgba(255,255,255,0.25);
+}
+
+.home-sub{
+  font-family:var(--font-m);
+  font-size:9px;
+  letter-spacing:0.18em;
+  color:rgba(255,255,255,0.42);
+  text-transform:uppercase;
+  margin-top:10px;
+}
+
+/* Module cards */
+.home-cards{
+  width:100%;
+  padding:0 28px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.mod-card{
+  width:100%;
+  border:none;background:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  display:flex;align-items:stretch;
+  position:relative;
+  transition:transform 0.1s;
+}
+.mod-card:active{transform:scale(0.98);}
+
+.mod-card-accent{
+  width:3px;flex-shrink:0;
+  background:rgba(255,255,255,0.28);
+  transition:background 0.2s, width 0.15s;
+}
+.mod-card:active .mod-card-accent{width:6px;}
+.mod-card.done .mod-card-accent{background:var(--red);}
+
+.mod-card-body{
+  flex:1;
+  border:1px solid rgba(255,255,255,0.12);
+  border-left:none;
+  padding:20px 18px 20px 22px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,0.03);
+  transition:background 0.12s;
+}
+.mod-card:active .mod-card-body{background:rgba(255,255,255,0.07);}
+.mod-card.done .mod-card-body{background:rgba(200,0,26,0.05);}
+
+.mod-card-left{}
+
+.mod-card-tag{
+  font-family:var(--font-m);
+  font-size:9px;
+  letter-spacing:0.14em;
+  color:rgba(255,255,255,0.42);
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+
+.mod-card-name{
+  font-family:var(--font-d);
+  font-size:32px;
+  letter-spacing:0.04em;
+  color:var(--w);
+  line-height:1;
+}
+.mod-card.done .mod-card-name{color:rgba(255,255,255,0.35);}
+
+.mod-card-desc{
+  font-family:var(--font-m);
+  font-size:10px;
+  color:rgba(255,255,255,0.40);
+  margin-top:5px;
+  letter-spacing:0.03em;
+  line-height:1.5;
+}
+
+.mod-card-right{
+  display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+}
+
+.mod-card-num{
+  font-family:var(--font-d);
+  font-size:40px;
+  color:var(--terracotta);
+  opacity:0.72;
+  line-height:1;
+  letter-spacing:-0.02em;
+}
+.mod-card.done .mod-card-num{color:transparent;}
+
+.mod-card-check{
+  font-size:20px;
+  opacity:0;
+  transition:opacity 0.2s;
+  color:var(--red);
+}
+.mod-card.done .mod-card-check{opacity:1;color:var(--red);}
+
+/* Start button — appears when all done */
+.home-start-wrap{
+  width:100%;padding:0 28px 52px;
+  flex-shrink:0;
+}
+
+.home-start{
+  width:100%;padding:18px;
+  background:var(--red);color:var(--w);
+  border:none;
+  font-family:var(--font-d);
+  font-size:22px;letter-spacing:0.1em;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.4s ease;
+}
+.home-start.ready{opacity:1;pointer-events:all;}
+.home-start:active{opacity:0.85;}
+
+/* Progress dots */
+.home-progress{
+  display:flex;gap:8px;
+  align-items:center;
+  justify-content:flex-start;
+  padding:20px 28px 0;
+  width:100%;
+}
+.hpd{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(255,255,255,0.18);
+  transition:background 0.3s;
+}
+.hpd.done{background:var(--red);}
+
+/* ════════════════════════════════
+   COUNTDOWN
+════════════════════════════════ */
+#s-countdown{
+  background:var(--b);
+  justify-content:center;align-items:center;
+}
+.cd-label{
+  font-family:var(--font-m);font-size:9px;
+  letter-spacing:0.2em;color:rgba(255,255,255,0.35);
+  text-transform:uppercase;margin-bottom:12px;
+}
+.cd-n{
+  font-family:var(--font-d);font-size:190px;
+  color:var(--w);line-height:1;
+  letter-spacing:-0.02em;transition:color 0.15s;
+}
+.cd-n.go{color:var(--red);}
+
+/* ════════════════════════════════
+   MODULE SHELL
+════════════════════════════════ */
+.mod-screen{
+  background:var(--w);
+  justify-content:flex-start;
+  padding:0;
+}
+
+.mtop{
+  position:absolute;top:0;left:0;right:0;
+  height:96px;
+  padding:44px 24px 12px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  border-bottom:1px solid var(--g1);
+  background:var(--w);z-index:10;
+}
+
+.mtop-left .mid{
+  font-family:var(--font-m);font-size:8px;
+  letter-spacing:0.18em;color:var(--dim);
+  text-transform:uppercase;margin-bottom:2px;
+}
+.mtop-left .mname{
+  font-family:var(--font-d);font-size:26px;
+  letter-spacing:0.06em;color:var(--b);line-height:1;
+}
+
+.mtimer{
+  font-family:var(--font-d);font-size:46px;
+  color:var(--b);letter-spacing:-0.02em;line-height:1;
+  transition:color 0.3s;
+}
+.mtimer.urgent{color:var(--err);}
+
+.pbar{position:absolute;top:0;left:0;right:0;height:3px;background:var(--g1);}
+.pfill{height:100%;background:var(--red);width:0%;transition:width 0.5s linear;}
+
+.mcanvas{
+  position:absolute;
+  top:96px;left:0;right:0;bottom:0;
+  touch-action:none;
+}
+
+.mscore{
+  position:absolute;bottom:24px;right:24px;
+  text-align:right;
+}
+.mscore .slabel{
+  font-family:var(--font-m);font-size:8px;
+  letter-spacing:0.14em;color:var(--dim);
+  text-transform:uppercase;
+}
+.mscore .sval{
+  font-family:var(--font-d);font-size:44px;
+  color:var(--b);letter-spacing:-0.02em;line-height:1;
+}
+
+/* ════════════════════════════════
+   RESULTS
+════════════════════════════════ */
+#s-results{
+  background:var(--w);
+  padding:0;
+  justify-content:space-between;
+}
+
+.res-scroll{
+  flex:1;overflow-y:auto;
+  width:100%;padding:54px 28px 20px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.res-eyebrow{
+  font-family:var(--font-m);font-size:9px;
+  letter-spacing:0.2em;color:var(--dim);
+  text-transform:uppercase;margin-bottom:6px;
+}
+
+.res-index{
+  font-family:var(--font-d);
+  font-size:96px;line-height:0.9;
+  letter-spacing:-0.02em;color:var(--red);
+}
+.res-index-label{
+  font-family:var(--font-c);font-weight:300;
+  font-size:13px;letter-spacing:0.14em;
+  color:var(--muted);text-transform:uppercase;
+  margin-top:4px;opacity:0.7;
+}
+
+.res-verdict{
+  font-family:var(--font-d);font-size:20px;
+  letter-spacing:0.04em;color:var(--b);
+  margin:10px 0 24px;line-height:1.1;
+}
+
+.res-grid{
+  width:100%;
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--g2);
+  border:1px solid var(--g2);
+  margin-bottom:24px;
+}
+.res-cell{
+  background:var(--w);padding:14px 10px;
+}
+.res-cell .rcl{
+  font-family:var(--font-m);font-size:7.5px;
+  letter-spacing:0.12em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:3px;
+}
+.res-cell .rcv{
+  font-family:var(--font-d);font-size:26px;
+  color:var(--b);line-height:1;
+}
+.res-cell .rcu{
+  font-family:var(--font-m);font-size:8px;
+  color:var(--dim);margin-top:1px;opacity:0.6;
+}
+
+.res-bar-wrap{margin-bottom:20px;}
+.res-bar-labels{
+  display:flex;justify-content:space-between;
+  font-family:var(--font-m);font-size:8.5px;
+  letter-spacing:0.12em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:8px;
+}
+.res-track{width:100%;height:6px;background:var(--g1);}
+.res-fill{height:100%;background:var(--red);width:0%;transition:width 1.4s cubic-bezier(0.16,1,0.3,1);}
+
+/* Breathing section */
+.breath-section{margin-top:4px;}
+.breath-title{
+  font-family:var(--font-m);font-size:9px;
+  letter-spacing:0.16em;color:var(--dim);
+  text-transform:uppercase;margin-bottom:12px;
+  padding-top:20px;
+  border-top:1px solid var(--g1);
+}
+
+.breath-btns{display:flex;flex-direction:column;gap:8px;}
+
+.breath-btn{
+  width:100%;border:none;background:none;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  display:flex;align-items:stretch;
+}
+
+.bbar{width:3px;flex-shrink:0;transition:width 0.12s;}
+.breath-btn.activation .bbar{background:var(--terracotta);}
+.breath-btn.regulation .bbar{background:var(--forest);}
+.breath-btn:active .bbar{width:6px;}
+
+.bbody{
+  flex:1;border:1.5px solid var(--g1);border-left:none;
+  padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--w);transition:background 0.1s;
+}
+.breath-btn:active .bbody{background:var(--g1);}
+
+.bbody-left .bname{
+  font-family:var(--font-d);font-size:22px;
+  letter-spacing:0.04em;color:var(--b);line-height:1;
+}
+.bbody-left .bdesc{
+  font-family:var(--font-m);font-size:9px;
+  color:var(--muted);margin-top:3px;letter-spacing:0.04em;
+}
+.barrow{font-size:16px;color:var(--g2);}
+
+.home-breath-row{
+  margin-top:10px;
+}
+
+.home-breath-btn{
+  width:100%;
+  padding:16px 22px;
+  background:rgba(30,122,82,0.12);
+  border:1px solid rgba(30,122,82,0.45);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--font-d);
+  font-size:18px;
+  letter-spacing:0.1em;
+  color:var(--forest);
+  transition:background 0.15s, border-color 0.15s;
+}
+.home-breath-btn:active{
+  background:rgba(30,122,82,0.22);
+  border-color:rgba(30,122,82,0.75);
+}
+
+.hbb-left{
+  display:flex;align-items:center;gap:12px;
+}
+
+.hbb-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--forest);
+  flex-shrink:0;
+}
+
+.hbb-arrow{
+  font-size:16px;
+  color:var(--forest);
+  opacity:0.6;
+}
+
+.hbb-sep{
+  width:1px;height:36px;
+  background:rgba(255,255,255,0.1);
+  flex-shrink:0;
+}
+
+/* bottom */
+.res-bottom{
+  width:100%;padding:12px 20px 48px;
+  border-top:1px solid var(--g1);
+  flex-shrink:0;
+}
+.res-restart{
+  width:100%;padding:16px;
+  background:var(--b);color:var(--w);
+  border:none;
+  font-family:var(--font-d);font-size:20px;
+  letter-spacing:0.1em;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.res-restart:active{opacity:0.8;}
+
+/* ════════════════════════════════
+   BREATH MENU
+════════════════════════════════ */
+#s-breath-menu{
+  background:var(--b);
+  justify-content:flex-start;
+  padding:0;
+}
+
+.bmenu-back{
+  width:100%;
+  padding:48px 28px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+
+.back-btn{
+  font-family:var(--font-m);font-size:10px;
+  letter-spacing:0.1em;color:rgba(255,255,255,0.38);
+  text-transform:uppercase;cursor:pointer;
+  background:none;border:none;
+  -webkit-tap-highlight-color:transparent;
+  padding:6px 0;
+  transition:color 0.15s;
+}
+.back-btn:active{color:rgba(255,255,255,0.70);}
+
+.bmenu-eyebrow{
+  font-family:var(--font-m);font-size:9px;
+  letter-spacing:0.18em;color:rgba(255,255,255,0.30);
+  text-transform:uppercase;
+}
+
+.bmenu-hero{
+  width:100%;
+  padding:28px 28px 24px;
+  flex-shrink:0;
+}
+
+.bmenu-title{
+  font-family:var(--font-d);
+  font-size:76px;line-height:0.88;
+  letter-spacing:0.01em;color:var(--w);
+}
+.bmenu-title em{
+  font-style:normal;
+  color:transparent;
+  -webkit-text-stroke:1.2px rgba(255,255,255,0.25);
+  display:block;
+}
+
+.bmenu-sub{
+  font-family:var(--font-m);font-size:10px;
+  letter-spacing:0.12em;color:rgba(255,255,255,0.35);
+  margin-top:10px;
+}
+
+.bmenu-cards{
+  width:100%;
+  padding:0 28px 40px;
+  display:flex;flex-direction:column;
+  gap:10px;
+  flex:1;
+  justify-content:center;
+}
+
+.bmenu-card{
+  width:100%;border:none;background:none;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  display:flex;align-items:stretch;
+  transition:transform 0.1s;
+}
+.bmenu-card:active{transform:scale(0.985);}
+
+.bmenu-card-stripe{
+  width:3px;flex-shrink:0;
+  transition:width 0.12s;
+}
+.bmenu-card:active .bmenu-card-stripe{width:6px;}
+
+.bmenu-card-body{
+  flex:1;
+  border:1px solid rgba(255,255,255,0.15);
+  border-left:none;
+  padding:22px 20px;
+  background:rgba(255,255,255,0.04);
+  transition:background 0.12s;
+  text-align:left;
+}
+.bmenu-card:active .bmenu-card-body{background:rgba(255,255,255,0.07);}
+
+.bmenu-card-top{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.bmenu-card-name{
+  font-family:var(--font-d);
+  font-size:38px;letter-spacing:0.06em;line-height:1;
+}
+
+.bmenu-card-arrow{
+  font-size:18px;color:rgba(255,255,255,0.28);
+  transition:transform 0.12s;
+}
+.bmenu-card:active .bmenu-card-arrow{transform:translateX(4px);}
+
+.bmenu-card-desc{
+  font-family:var(--font-m);font-size:10.5px;
+  color:rgba(255,255,255,0.38);
+  line-height:1.65;letter-spacing:0.03em;
+  margin-bottom:14px;
+}
+
+.bmenu-card-meta{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--font-m);font-size:9px;
+  letter-spacing:0.1em;color:rgba(255,255,255,0.28);
+  flex-wrap:wrap;
+}
+
+/* ════════════════════════════════
+   BREATHING SCREEN
+════════════════════════════════ */
+#s-breath{
+  background:var(--b);
+  justify-content:center;align-items:center;
+}
+
+.breath-top{
+  position:absolute;top:44px;left:0;right:0;
+  padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.breath-back{
+  font-family:var(--font-m);font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;cursor:pointer;
+  background:none;border:none;color:rgba(255,255,255,0.38);
+  -webkit-tap-highlight-color:transparent;
+  padding:8px 0;
+  transition:color 0.15s;
+}
+.breath-back:active{color:rgba(255,255,255,0.70);}
+
+.breath-type-tag{
+  font-family:var(--font-m);font-size:9px;
+  letter-spacing:0.18em;color:rgba(200,168,130,0.35);
+  text-transform:uppercase;
+}
+
+.breath-center{
+  display:flex;flex-direction:column;
+  align-items:center;gap:0;
+  position:relative;
+}
+
+.breath-ring-wrap{
+  position:relative;
+  width:220px;height:220px;
+}
+
+.breath-svg{
+  width:100%;height:100%;
+  transform:rotate(-90deg);
+}
+
+.breath-ring-bg{
+  fill:none;
+  stroke:rgba(255,255,255,0.08);
+  stroke-width:6;
+}
+
+.breath-ring-fill{
+  fill:none;
+  stroke:var(--breath-col, rgba(255,255,255,0.6));
+  stroke-width:6;
+  stroke-linecap:round;
+  stroke-dasharray:565;
+  stroke-dashoffset:565;
+  transition:stroke-dashoffset 0.12s linear, stroke 0.5s;
+}
+
+.breath-inner{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+
+.breath-phase-label{
+  font-family:var(--font-d);
+  font-size:30px;letter-spacing:0.06em;
+  color:var(--w);line-height:1;
+  transition:opacity 0.3s;
+}
+
+.breath-phase-count{
+  font-family:var(--font-d);
+  font-size:54px;color:var(--w);
+  letter-spacing:-0.02em;line-height:1;
+  margin-top:2px;
+}
+
+.breath-name{
+  font-family:var(--font-d);
+  font-size:28px;letter-spacing:0.06em;
+  color:rgba(255,255,255,0.44);
+  margin-top:24px;text-align:center;
+}
+
+.breath-cycles{
+  font-family:var(--font-m);font-size:9px;
+  letter-spacing:0.16em;color:rgba(255,255,255,0.30);
+  text-transform:uppercase;margin-top:8px;
+}
+
+.breath-start-btn{
+  margin-top:32px;
+  padding:14px 52px;
+  background:var(--w);color:var(--b);
+  border:none;font-family:var(--font-d);
+  font-size:18px;letter-spacing:0.1em;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.breath-start-btn:active{opacity:0.8;}
+
+.breath-done-msg{
+  font-family:var(--font-d);font-size:22px;
+  letter-spacing:0.06em;color:rgba(255,255,255,0.5);
+  margin-top:32px;text-align:center;
+  display:none;
+}
+
+/* ════════════════════════════════
+   FLASH
+════════════════════════════════ */
+#flash{
+  position:fixed;inset:0;
+  pointer-events:none;opacity:0;z-index:200;
+  transition:opacity 0.08s;
+}
+#flash.ok{background:rgba(26,153,82,0.12);}
+#flash.err{background:rgba(200,0,26,0.12);}
+#flash.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div id="flash"></div>
+
+<!-- ═══════════════════════════════════════
+     HOME
+═══════════════════════════════════════ -->
+<div class="screen active" id="s-home">
+
+  <div class="home-top">
+    <div class="home-wordmark">APEX<em>PRIME</em></div>
+    <div class="home-sub">IGNICIÓN COGNITIVA PRE-CARRERA — COMPLETA LOS 4 EJERCICIOS</div>
+  </div>
+
+  <div class="home-progress">
+    <div class="hpd" id="pd-visual"></div>
+    <div class="hpd" id="pd-reaction"></div>
+    <div class="hpd" id="pd-cognitive"></div>
+    <div class="hpd" id="pd-filter"></div>
+  </div>
+
+  <div class="home-cards">
+
+    <button class="mod-card" id="card-visual" onclick="launchModule('visual')">
+      <div class="mod-card-accent"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-left">
+          <div class="mod-card-tag">MÓDULO VISUAL</div>
+          <div class="mod-card-name">VISUAL BURST</div>
+          <div class="mod-card-desc">Targets sacádicos — activación periférica</div>
+        </div>
+        <div class="mod-card-right">
+          <div class="mod-card-num">I</div>
+          <div class="mod-card-check">✓</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="mod-card" id="card-reaction" onclick="launchModule('reaction')">
+      <div class="mod-card-accent"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-left">
+          <div class="mod-card-tag">MÓDULO REACCIÓN</div>
+          <div class="mod-card-name">RAPID STRIKE</div>
+          <div class="mod-card-desc">Tiempo de reacción — calibración motora</div>
+        </div>
+        <div class="mod-card-right">
+          <div class="mod-card-num">II</div>
+          <div class="mod-card-check">✓</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="mod-card" id="card-filter" onclick="launchModule('filter')">
+      <div class="mod-card-accent"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-left">
+          <div class="mod-card-tag">MÓDULO ATENCIONAL</div>
+          <div class="mod-card-name">FILTER SHIFT</div>
+          <div class="mod-card-desc">Discriminación cromática dinámica — foco cambiante</div>
+        </div>
+        <div class="mod-card-right">
+          <div class="mod-card-num">IV</div>
+          <div class="mod-card-check">✓</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="mod-card" id="card-cognitive" onclick="launchModule('cognitive')">
+      <div class="mod-card-accent"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-left">
+          <div class="mod-card-tag">MÓDULO COGNITIVO</div>
+          <div class="mod-card-name">RAPID DECODE</div>
+          <div class="mod-card-desc">Memoria visual de trabajo — inhibición de respuesta</div>
+        </div>
+        <div class="mod-card-right">
+          <div class="mod-card-num">III</div>
+          <div class="mod-card-check">✓</div>
+        </div>
+      </div>
+    </button>
+  </div>
+
+  <div class="home-start-wrap">
+    <button class="home-start" id="home-start-btn" onclick="showResults()">
+      VER RESULTADOS →
+    </button>
+    <div class="home-breath-row">
+      <button class="home-breath-btn" onclick="show('breath-menu')">
+        <div class="hbb-left">
+          <span class="hbb-dot"></span>
+          RESPIRACIÓN
+        </div>
+        <span class="hbb-arrow">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     COUNTDOWN
+═══════════════════════════════════════ -->
+<div class="screen" id="s-countdown">
+  <div class="cd-label" id="cd-label">MÓDULO VISUAL</div>
+  <div class="cd-n" id="cd-n">3</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MOD — VISUAL BURST
+═══════════════════════════════════════ -->
+<div class="screen mod-screen" id="s-visual">
+  <div class="pbar"><div class="pfill" id="pf-v"></div></div>
+  <div class="mtop">
+    <div class="mtop-left">
+      <div class="mid">MÓDULO VISUAL</div>
+      <div class="mname">VISUAL BURST</div>
+    </div>
+    <div class="mtimer" id="tm-v">40</div>
+  </div>
+  <canvas class="mcanvas" id="cv-v"></canvas>
+  <div class="mscore"><div class="slabel">TOCADOS</div><div class="sval" id="sv-v">0</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MOD — RAPID STRIKE (REACTION)
+═══════════════════════════════════════ -->
+<div class="screen mod-screen" id="s-reaction">
+  <div class="pbar"><div class="pfill" id="pf-r"></div></div>
+  <div class="mtop">
+    <div class="mtop-left">
+      <div class="mid">MÓDULO REACCIÓN</div>
+      <div class="mname">RAPID STRIKE</div>
+    </div>
+    <div class="mtimer" id="tm-r">8</div>
+  </div>
+  <canvas class="mcanvas" id="cv-r"></canvas>
+  <div class="mscore"><div class="slabel">PROM. RT</div><div class="sval" id="sv-r">—</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MOD — FILTER SHIFT
+═══════════════════════════════════════ -->
+<div class="screen mod-screen" id="s-filter">
+  <div class="pbar"><div class="pfill" id="pf-f"></div></div>
+  <div class="mtop">
+    <div class="mtop-left">
+      <div class="mid">MÓDULO ATENCIONAL</div>
+      <div class="mname">FILTER SHIFT</div>
+    </div>
+    <div class="mtimer" id="tm-f">40</div>
+  </div>
+  <canvas class="mcanvas" id="cv-f"></canvas>
+  <div class="mscore"><div class="slabel">PRECISIÓN</div><div class="sval" id="sv-f">—</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MOD — RAPID DECODE (COGNITIVE)
+═══════════════════════════════════════ -->
+<div class="screen mod-screen" id="s-cognitive">
+  <div class="pbar"><div class="pfill" id="pf-c"></div></div>
+  <div class="mtop">
+    <div class="mtop-left">
+      <div class="mid">MÓDULO COGNITIVO</div>
+      <div class="mname">RAPID DECODE</div>
+    </div>
+    <div class="mtimer" id="tm-c">40</div>
+  </div>
+  <canvas class="mcanvas" id="cv-c"></canvas>
+  <div class="mscore"><div class="slabel">ACIERTOS</div><div class="sval" id="sv-c">—</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     RESULTS
+═══════════════════════════════════════ -->
+<div class="screen" id="s-results">
+  <div class="res-scroll">
+    <div class="res-eyebrow" id="r-eyebrow">PROTOCOLO COMPLETADO</div>
+    <div class="res-index" id="r-score">—</div>
+    <div class="res-index-label">ÍNDICE DE PREPARACIÓN / 100</div>
+    <div class="res-verdict" id="r-verdict">—</div>
+
+    <div class="res-grid">
+      <div class="res-cell">
+        <div class="rcl">Visual</div>
+        <div class="rcv" id="r1">—</div>
+        <div class="rcu">targets</div>
+      </div>
+      <div class="res-cell">
+        <div class="rcl">Reacción</div>
+        <div class="rcv" id="r2">—</div>
+        <div class="rcu">ms prom.</div>
+      </div>
+      <div class="res-cell">
+        <div class="rcl">Cognitivo</div>
+        <div class="rcv" id="r3">—</div>
+        <div class="rcu">% aciertos</div>
+      </div>
+      <div class="res-cell" style="grid-column:1/-1;">
+        <div class="rcl">Filter Shift — discriminación dinámica</div>
+        <div class="rcv" id="r4">—</div>
+        <div class="rcu">% precisión</div>
+      </div>
+    </div>
+
+    <div class="res-bar-wrap">
+      <div class="res-bar-labels">
+        <span>NIVEL COGNITIVO</span>
+        <span id="r-pct">0%</span>
+      </div>
+      <div class="res-track"><div class="res-fill" id="r-fill"></div></div>
+    </div>
+
+    <!-- BREATHING -->
+    <div class="breath-section">
+      <div class="breath-title">PROTOCOLO DE AJUSTE RESPIRATORIO</div>
+      <div class="breath-btns">
+
+        <button class="breath-btn activation" onclick="launchBreath('activation','results')">
+          <div class="bbar"></div>
+          <div class="bbody">
+            <div class="bbody-left">
+              <div class="bname">IGNICIÓN</div>
+              <div class="bdesc">Activación simpática — ritmo rápido ascendente<br>Para cuando necesitás más presencia</div>
+            </div>
+            <div class="barrow">→</div>
+          </div>
+        </button>
+
+        <button class="breath-btn regulation" onclick="launchBreath('regulation','results')">
+          <div class="bbar"></div>
+          <div class="bbody">
+            <div class="bbody-left">
+              <div class="bname">REGULACIÓN VAGAL</div>
+              <div class="bdesc">Activación parasimpática — freno vagal<br>Para cuando hay que bajar la tensión</div>
+            </div>
+            <div class="barrow">→</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-bottom">
+    <button class="res-restart" onclick="resetAll()">↺ NUEVO PROTOCOLO</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     BREATH MENU
+═══════════════════════════════════════ -->
+<div class="screen" id="s-breath-menu">
+  <div class="bmenu-back">
+    <button class="back-btn" onclick="show('home')">← VOLVER</button>
+    <div class="bmenu-eyebrow">PROTOCOLO RESPIRATORIO</div>
+  </div>
+
+  <div class="bmenu-hero">
+    <div class="bmenu-title">RESPIRA<em>CIÓN</em></div>
+    <div class="bmenu-sub">Elige el modo según tu estado ahora</div>
+  </div>
+
+  <div class="bmenu-cards">
+
+    <button class="bmenu-card" onclick="launchBreath('activation')">
+      <div class="bmenu-card-stripe" style="background:#D4541C"></div>
+      <div class="bmenu-card-body">
+        <div class="bmenu-card-top">
+          <div class="bmenu-card-name" style="color:#D4541C">ACTIVACIÓN</div>
+          <div class="bmenu-card-arrow">→</div>
+        </div>
+        <div class="bmenu-card-desc">
+          Ritmo ascendente — inhala más que exhala<br>
+          Activa el sistema simpático sin hiperventilar
+        </div>
+        <div class="bmenu-card-meta">
+          <span>15 ciclos</span>
+          <span>·</span>
+          <span>2.5s / 1.5s</span>
+          <span>·</span>
+          <span>~4 min</span>
+        </div>
+      </div>
+    </button>
+
+    <button class="bmenu-card" onclick="launchBreath('regulation')">
+      <div class="bmenu-card-stripe" style="background:#1E7A52"></div>
+      <div class="bmenu-card-body">
+        <div class="bmenu-card-top">
+          <div class="bmenu-card-name" style="color:#1E7A52">RELAJACIÓN</div>
+          <div class="bmenu-card-arrow">→</div>
+        </div>
+        <div class="bmenu-card-desc">
+          Exhala larga — activa el nervio vago<br>
+          Reduce el tono simpático y estabiliza el HRV
+        </div>
+        <div class="bmenu-card-meta">
+          <span>6 ciclos</span>
+          <span>·</span>
+          <span>4s inhala / 4s sostén / 7s exhala</span>
+          <span>·</span>
+          <span>~3 min</span>
+        </div>
+      </div>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     BREATHING SCREEN
+═══════════════════════════════════════ -->
+<div class="screen" id="s-breath">
+  <div class="breath-top">
+    <button class="breath-back" onclick="show(BREATH_ORIGIN)">← VOLVER</button>
+    <div class="breath-type-tag" id="btype-tag">IGNICIÓN</div>
+  </div>
+
+  <div class="breath-center">
+    <div class="breath-ring-wrap">
+      <svg class="breath-svg" viewBox="0 0 200 200">
+        <circle class="breath-ring-bg" cx="100" cy="100" r="90"/>
+        <circle class="breath-ring-fill" id="bring" cx="100" cy="100" r="90"/>
+      </svg>
+      <div class="breath-inner">
+        <div class="breath-phase-label" id="bphase">—</div>
+        <div class="breath-phase-count" id="bcount">—</div>
+      </div>
+    </div>
+
+    <div class="breath-name" id="bname">IGNICIÓN</div>
+    <div class="breath-cycles" id="bcycles">0 / 0 CICLOS</div>
+
+    <button class="breath-start-btn" id="bstart" onclick="beginBreath()">INICIAR</button>
+    <div class="breath-done-msg" id="bdone">PROTOCOLO COMPLETADO ✓</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     JS ENGINE
+═══════════════════════════════════════ -->
+<script>
+/* ════════════════════════════
+   STATE
+════════════════════════════ */
+const STATE={
+  done: new Set(),
+  scores: {visual:0, reaction:0, cognitive:0, filter:0},
+  pending: null  // module about to start
+};
+
+let INTERVAL=null, RAF=null;
+
+/* ════════════════════════════
+   UTILS
+════════════════════════════ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('s-'+id);
+  if(el) el.classList.add('active');
+}
+
+function flash(t){
+  const el=document.getElementById('flash');
+  el.className=t+' show';
+  setTimeout(()=>el.className='',110);
+}
+
+function raf_stop(){if(RAF){cancelAnimationFrame(RAF);RAF=null;}}
+
+function setupCanvas(id){
+  const c=document.getElementById(id);
+  c.width=window.innerWidth;
+  c.height=window.innerHeight-96;
+  return {c, ctx:c.getContext('2d'), W:c.width, H:c.height};
+}
+
+function addTC(el, fn){
+  el.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    const r=el.getBoundingClientRect();
+    fn(e.touches[0].clientX-r.left, e.touches[0].clientY-r.top);
+  },{passive:false});
+  el.addEventListener('click',e=>{
+    const r=el.getBoundingClientRect();
+    fn(e.clientX-r.left, e.clientY-r.top);
+  });
+  el._tapfn=fn;
+}
+
+function remTC(el){
+  if(el._tapfn){
+    el.removeEventListener('touchstart',el._tapfn);
+    el.removeEventListener('click',el._tapfn);
+    el._tapfn=null;
+  }
+}
+
+/* Timer */
+function startTimer(dur, tid, pid, onEnd){
+  const te=document.getElementById(tid);
+  const pe=document.getElementById(pid);
+  let rem=dur;
+  te.textContent=rem; pe.style.width='0%';
+  te.classList.remove('urgent');
+  INTERVAL=setInterval(()=>{
+    rem--;
+    te.textContent=rem;
+    pe.style.width=((dur-rem)/dur*100)+'%';
+    if(rem<=5) te.classList.add('urgent');
+    if(rem<=0){clearInterval(INTERVAL);setTimeout(onEnd,300);}
+  },1000);
+}
+
+/* ════════════════════════════
+   HOME LOGIC
+════════════════════════════ */
+function launchModule(mod){
+  if(STATE.done.has(mod)) return;
+  STATE.pending=mod;
+  const labels={
+    visual:'MÓDULO VISUAL', reaction:'MÓDULO REACCIÓN',
+    cognitive:'MÓDULO COGNITIVO', filter:'MÓDULO ATENCIONAL'
+  };
+  document.getElementById('cd-label').textContent=labels[mod];
+  countdown(()=>startModule(mod));
+}
+
+function markDone(mod){
+  STATE.done.add(mod);
+  document.getElementById('card-'+mod).classList.add('done');
+  document.getElementById('pd-'+mod).classList.add('done');
+  if(STATE.done.size===4){
+    document.getElementById('home-start-btn').classList.add('ready');
+  }
+  show('home');
+}
+
+/* ════════════════════════════
+   COUNTDOWN
+════════════════════════════ */
+function countdown(cb){
+  show('countdown');
+  let n=3;
+  const el=document.getElementById('cd-n');
+  el.textContent=n; el.classList.remove('go');
+  const t=setInterval(()=>{
+    n--;
+    if(n<=0){
+      clearInterval(t);
+      el.textContent='GO'; el.classList.add('go');
+      setTimeout(cb,450);
+    } else el.textContent=n;
+  },700);
+}
+
+function startModule(mod){
+  if(mod==='visual')    startVisual();
+  if(mod==='reaction')  startReaction();
+  if(mod==='cognitive') startCognitive();
+  if(mod==='filter')    startFilter();
+}
+
+/* ════════════════════════════════════════
+   MODULE 1 — VISUAL BURST
+   Colored ring targets flash at random
+   positions. Ring shrinks — tap before it
+   closes. Pure saccadic activation.
+════════════════════════════════════════ */
+let VB={targets:[],hit:0,active:false,lastSpawn:0};
+const VB_COLORS=['#C8001A','#1A1A1A','#888886','#444444','#C0C0BE','#333333'];
+
+function startVisual(){
+  show('visual');raf_stop();
+  VB={targets:[],hit:0,active:true,lastSpawn:0};
+  document.getElementById('sv-v').textContent='0';
+  const {c,ctx,W,H}=setupCanvas('cv-v');
+  startTimer(40,'tm-v','pf-v',endVisual);
+  addTC(c,(tx,ty)=>vbTap(tx,ty));
+  RAF=requestAnimationFrame(ts=>vbLoop(ts,ctx,W,H));
+}
+
+function spawnVB(W,H,ts){
+  const m=55;
+  const x=m+Math.random()*(W-m*2);
+  const y=m+Math.random()*(H-m*2);
+  const r=24+Math.random()*14;
+  const life=600+Math.random()*500;
+  VB.targets.push({
+    x,y,r,born:ts,life,hit:false,
+    col:VB_COLORS[Math.floor(Math.random()*VB_COLORS.length)]
+  });
+}
+
+function vbTap(tx,ty){
+  for(let i=VB.targets.length-1;i>=0;i--){
+    const t=VB.targets[i];if(t.hit)continue;
+    if(Math.hypot(tx-t.x,ty-t.y)<t.r+14){
+      t.hit=true;VB.hit++;
+      document.getElementById('sv-v').textContent=VB.hit;
+      flash('ok');return;
+    }
+  }
+  flash('err');
+}
+
+function vbLoop(ts,ctx,W,H){
+  ctx.clearRect(0,0,W,H);
+  const now=ts;
+
+  // Spawn
+  const rate=460;
+  if(now-VB.lastSpawn>rate){spawnVB(W,H,ts);VB.lastSpawn=now;}
+
+  // Cleanup
+  VB.targets=VB.targets.filter(t=>!t.hit&&(ts-t.born)<t.life);
+
+  for(const t of VB.targets){
+    const age=ts-t.born;
+    const pct=age/t.life;
+    const alpha=pct>0.75?1-(pct-0.75)/0.25:1;
+    const sc=Math.min(1,age/80);
+    const circ=2*Math.PI*t.r;
+    const remaining=(1-pct)*circ;
+
+    ctx.save();
+    ctx.globalAlpha=alpha;
+    ctx.translate(t.x,t.y);
+    ctx.scale(sc,sc);
+
+    // Outer ring dim
+    ctx.beginPath();ctx.arc(0,0,t.r,0,Math.PI*2);
+    ctx.strokeStyle=t.col+'33';ctx.lineWidth=2;ctx.stroke();
+
+    // Countdown ring
+    ctx.beginPath();
+    ctx.arc(0,0,t.r,-Math.PI/2,-Math.PI/2+(1-pct)*Math.PI*2);
+    ctx.strokeStyle=t.col;ctx.lineWidth=5;ctx.lineCap='round';ctx.stroke();
+
+    // Inner fill dot
+    ctx.beginPath();ctx.arc(0,0,6,0,Math.PI*2);
+    ctx.fillStyle=t.col;ctx.fill();
+
+    ctx.restore();
+  }
+
+  if(VB.active) RAF=requestAnimationFrame(ts=>vbLoop(ts,ctx,W,H));
+}
+
+function endVisual(){
+  clearInterval(INTERVAL);raf_stop();VB.active=false;
+  remTC(document.getElementById('cv-v'));
+  STATE.scores.visual=VB.hit;
+  markDone('visual');
+}
+
+/* ════════════════════════════════════════
+   MODULE 2 — RAPID STRIKE (REACTION TIME)
+   Target appears after variable delay.
+   Tap ASAP. 10 trials.
+   Score = average RT in ms.
+════════════════════════════════════════ */
+let RT={trials:0, total:10, rts:[], phase:'wait', targetOn:null, spawn:null, active:false};
+let rtSpawnH=null;
+
+function startReaction(){
+  show('reaction');raf_stop();
+  RT={trials:0,total:10,rts:[],phase:'idle',targetOn:null,active:true};
+  document.getElementById('sv-r').textContent='—';
+  document.getElementById('tm-r').textContent='10';
+  document.getElementById('tm-r').classList.remove('urgent');
+  document.getElementById('pf-r').style.width='0%';
+
+  const {c,ctx,W,H}=setupCanvas('cv-r');
+  addTC(c,(tx,ty)=>rtTap(tx,ty,W,H,ctx));
+  RAF=requestAnimationFrame(()=>rtRender(ctx,W,H,'idle',null));
+  rtNext(ctx,W,H);
+}
+
+function rtNext(ctx,W,H){
+  if(!RT.active) return;
+  RT.phase='wait';
+  rtRender(ctx,W,H,'wait',null);
+  const delay=800+Math.random()*2200;
+  rtSpawnH=setTimeout(()=>{
+    if(!RT.active) return;
+    const m=80;
+    const tx=m+Math.random()*(W-m*2);
+    const ty=m+Math.random()*(H-m*2);
+    RT.spawn={x:tx,y:ty,r:52};
+    RT.targetOn=performance.now();
+    RT.phase='active';
+    rtRender(ctx,W,H,'active',RT.spawn);
+
+    // Auto-miss after 1800ms
+    rtSpawnH=setTimeout(()=>{
+      if(RT.phase==='active'){
+        RT.phase='miss';RT.trials++;
+        rtRender(ctx,W,H,'miss',RT.spawn);
+        document.getElementById('pf-r').style.width=(RT.trials/RT.total*100)+'%';
+        document.getElementById('tm-r').textContent=RT.total-RT.trials;
+        setTimeout(()=>{
+          if(RT.trials>=RT.total){endReaction();return;}
+          rtNext(ctx,W,H);
+        },500);
+      }
+    },1800);
+  },delay);
+}
+
+function rtTap(tx,ty,W,H,ctx){
+  if(RT.phase==='active' && RT.spawn){
+    const d=Math.hypot(tx-RT.spawn.x,ty-RT.spawn.y);
+    if(d<RT.spawn.r+20){
+      const rt=performance.now()-RT.targetOn;
+      RT.rts.push(rt);
+      RT.phase='hit';RT.trials++;
+      clearTimeout(rtSpawnH);
+      flash('ok');
+      const avg=Math.round(RT.rts.reduce((a,b)=>a+b,0)/RT.rts.length);
+      document.getElementById('sv-r').textContent=avg+'ms';
+      document.getElementById('pf-r').style.width=(RT.trials/RT.total*100)+'%';
+      document.getElementById('tm-r').textContent=RT.total-RT.trials;
+      rtRender(ctx,W,H,'hit',RT.spawn);
+      setTimeout(()=>{
+        if(RT.trials>=RT.total){endReaction();return;}
+        rtNext(ctx,W,H);
+      },450);
+    }
+  } else if(RT.phase==='wait'){
+    flash('err'); // Early press
+  }
+}
+
+function rtRender(ctx,W,H,phase,tgt){
+  ctx.clearRect(0,0,W,H);
+
+  if(phase==='wait'||phase==='idle'){
+    ctx.font=`300 11px "Courier Prime"`;
+    ctx.fillStyle='#909090';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('ESPERA EL TARGET…',W/2,H/2-12);
+    // Small crosshair
+    ctx.strokeStyle='#D8D8D6';ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(W/2-16,H/2+8);ctx.lineTo(W/2+16,H/2+8);
+    ctx.moveTo(W/2,H/2);ctx.lineTo(W/2,H/2+24);
+    ctx.stroke();
+    return;
+  }
+
+  if(!tgt) return;
+
+  const col=phase==='hit'?'#1A9952':phase==='miss'?'#D94030':'#080808';
+
+  // Outer ring
+  ctx.beginPath();ctx.arc(tgt.x,tgt.y,tgt.r,0,Math.PI*2);
+  ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();
+
+  // Inner dot
+  ctx.beginPath();ctx.arc(tgt.x,tgt.y,8,0,Math.PI*2);
+  ctx.fillStyle=col;ctx.fill();
+
+  if(phase==='active'){
+    // Pulse rings
+    const now=performance.now();
+    const pulse=(Math.sin(now/120)+1)/2;
+    ctx.beginPath();ctx.arc(tgt.x,tgt.y,tgt.r+12+pulse*6,0,Math.PI*2);
+    ctx.strokeStyle=col;ctx.lineWidth=1;ctx.globalAlpha=0.2*pulse;ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+}
+
+function endReaction(){
+  clearInterval(INTERVAL);clearTimeout(rtSpawnH);raf_stop();RT.active=false;
+  remTC(document.getElementById('cv-r'));
+  const avg=RT.rts.length>0?Math.round(RT.rts.reduce((a,b)=>a+b)/RT.rts.length):999;
+  STATE.scores.reaction=avg;
+  markDone('reaction');
+}
+
+/* ════════════════════════════════════════
+   MODULE 3 — RAPID DECODE (COGNITIVE)
+   Number flashes briefly (650ms).
+   Then 4 options appear.
+   Tap the correct one. 12 rounds.
+════════════════════════════════════════ */
+let RD={correct:0,total:0,active:false,phase:'idle',shown:null,target:null,opts:[],btns:[]};
+let rdH=null;
+
+function startCognitive(){
+  show('cognitive');raf_stop();
+  RD={correct:0,total:0,active:true,phase:'idle',shown:null,target:null,opts:[],btns:[]};
+  document.getElementById('sv-c').textContent='—';
+  const {c,ctx,W,H}=setupCanvas('cv-c');
+  startTimer(40,'tm-c','pf-c',endCognitive);
+  addTC(c,(tx,ty)=>rdTap(tx,ty,W,H,ctx));
+  rdRound(ctx,W,H);
+}
+
+function rdRound(ctx,W,H){
+  if(!RD.active) return;
+  RD.phase='show';
+  // Show a digit 1-9
+  const n=1+Math.floor(Math.random()*9);
+  RD.shown=n;
+  // Correct answer = n+1 (9 wraps to 1) — inhibit the obvious match
+  const correct=n===9?1:n+1;
+  RD.target=correct;
+  // Options: include BOTH the shown number (trap) and correct + 2 others
+  const others=[];
+  while(others.length<2){
+    const w=1+Math.floor(Math.random()*9);
+    if(w!==correct&&w!==n&&!others.includes(w)) others.push(w);
+  }
+  RD.opts=[correct,n,...others].sort(()=>Math.random()-0.5);
+  rdRender(ctx,W,H);
+
+  rdH=setTimeout(()=>{
+    if(!RD.active) return;
+    RD.phase='choice';
+    rdRender(ctx,W,H);
+  },600);
+}
+
+function rdRender(ctx,W,H){
+  ctx.clearRect(0,0,W,H);
+  if(RD.phase==='show'){
+    // Rule reminder at top
+    ctx.font=`700 10px "Courier Prime"`;
+    ctx.fillStyle='#080808';
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('TOCA EL NÚMERO SIGUIENTE  (+1)',W/2,18);
+
+    // Big flashing digit
+    ctx.font=`900 190px "Bebas Neue"`;
+    ctx.fillStyle='#080808';
+    ctx.textBaseline='middle';
+    ctx.fillText(RD.shown,W/2,H*0.44);
+
+    ctx.font=`400 9px "Courier Prime"`;
+    ctx.fillStyle='#909090';
+    ctx.fillText('SI VES ' + RD.shown + ' → TOCA ' + RD.target,W/2,H*0.75);
+
+  } else {
+    // Rule at top
+    ctx.font=`700 10px "Courier Prime"`;
+    ctx.fillStyle='#080808';
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('Viste   ' + RD.shown + '   → ¿cuál es el siguiente?',W/2,18);
+
+    const bW=(W-40)/2-6, bH=84;
+    const gapX=12, gapY=12;
+    const startX=20;
+    const startY=H*0.20;
+
+    RD.btns=RD.opts.map((opt,i)=>{
+      const col=i%2, row=Math.floor(i/2);
+      const bx=startX+col*(bW+gapX);
+      const by=startY+row*(bH+gapY);
+      return {opt,x:bx,y:by,w:bW,h:bH};
+    });
+
+    for(const btn of RD.btns){
+      // Trap number (shown digit) gets subtle visual distinction — same color, no hint
+      ctx.fillStyle='#F2F2F0';
+      ctx.fillRect(btn.x,btn.y,btn.w,btn.h);
+      ctx.font=`900 58px "Bebas Neue"`;
+      ctx.fillStyle='#080808';ctx.textBaseline='middle';ctx.textAlign='center';
+      ctx.fillText(btn.opt,btn.x+btn.w/2,btn.y+btn.h/2);
+    }
+  }
+}
+
+function rdTap(tx,ty,W,H,ctx){
+  if(!RD.active||RD.phase!=='choice') return;
+  for(const btn of RD.btns){
+    if(tx>=btn.x&&tx<=btn.x+btn.w&&ty>=btn.y&&ty<=btn.y+btn.h){
+      const ok=btn.opt===RD.target;
+      RD.total++;if(ok)RD.correct++;
+      clearTimeout(rdH);flash(ok?'ok':'err');
+      const pct=Math.round(RD.correct/RD.total*100);
+      document.getElementById('sv-c').textContent=pct+'%';
+      // Highlight — show both trap and correct
+      ctx.clearRect(0,0,W,H);
+      ctx.font=`700 10px "Courier Prime"`;
+      ctx.fillStyle='#080808';ctx.textAlign='center';ctx.textBaseline='top';
+      ctx.fillText('Viste   ' + RD.shown + '   → ¿cuál es el siguiente?',W/2,18);
+      for(const b of RD.btns){
+        const isChosen=b===btn;
+        const isCorrect=b.opt===RD.target;
+        const isTrap=b.opt===RD.shown;
+        ctx.fillStyle=isCorrect?'#E8F5EE':isChosen&&!ok?'#FFF0F0':'#F2F2F0';
+        ctx.fillRect(b.x,b.y,b.w,b.h);
+        // Mark trap with small X overlay
+        ctx.font=`900 58px "Bebas Neue"`;
+        ctx.fillStyle=isCorrect?'#1A9952':isChosen&&!ok?'#D94030':'#909090';
+        ctx.textBaseline='middle';ctx.textAlign='center';
+        ctx.fillText(b.opt,b.x+b.w/2,b.y+b.h/2);
+        if(isTrap&&!isChosen){
+          ctx.font=`700 9px "Courier Prime"`;
+          ctx.fillStyle='#D94030';
+          ctx.fillText('TRAMPA',b.x+b.w/2,b.y+b.h-10);
+        }
+      }
+      setTimeout(()=>{if(RD.active)rdRound(ctx,W,H);},420);
+      return;
+    }
+  }
+}
+
+function endCognitive(){
+  clearInterval(INTERVAL);clearTimeout(rdH);raf_stop();RD.active=false;
+  remTC(document.getElementById('cv-c'));
+  STATE.scores.cognitive=RD.total>0?Math.round(RD.correct/RD.total*100):0;
+  markDone('cognitive');
+}
+
+/* ════════════════════════════════════════
+   MODULE — FILTER SHIFT
+   Circles fall from top. Tap ONLY the
+   target color. Every 3 correct hits the
+   target color changes → attentional set
+   shifting. Inhibit the old color.
+════════════════════════════════════════ */
+const FS_PALETTE=[
+  {name:'ROJO',    col:'#C8001A', label:'●'},
+  {name:'NEGRO',   col:'#1A1A1A', label:'●'},
+  {name:'GRIS',    col:'#888886', label:'●'},
+  {name:'CARBÓN',  col:'#3A3A38', label:'●'},
+  {name:'PLATA',   col:'#C0C0BE', label:'●'},
+];
+
+let FS={
+  dots:[],correct:0,total:0,active:false,
+  targetIdx:0,hitsOnTarget:0,
+  lastSpawn:0,shifting:false,shiftTs:0
+};
+
+function startFilter(){
+  show('filter');raf_stop();
+  // Pick random starting color
+  const startIdx=Math.floor(Math.random()*FS_PALETTE.length);
+  FS={dots:[],correct:0,total:0,active:true,
+    targetIdx:startIdx,hitsOnTarget:0,
+    lastSpawn:0,shifting:false,shiftTs:0};
+
+  document.getElementById('sv-f').textContent='—';
+  const {c,ctx,W,H}=setupCanvas('cv-f');
+  startTimer(40,'tm-f','pf-f',endFilter);
+  addTC(c,(tx,ty)=>fsTap(tx,ty,W,H));
+  RAF=requestAnimationFrame(ts=>fsLoop(ts,ctx,W,H));
+}
+
+function fsSpawnDot(W,H,ts){
+  const margin=44;
+  const x=margin+Math.random()*(W-margin*2);
+  const r=22+Math.random()*10;
+  const spd=95+Math.random()*65;
+  // 40% chance of being target color
+  const isTarget=Math.random()<0.40;
+  let colIdx;
+  if(isTarget){
+    colIdx=FS.targetIdx;
+  } else {
+    // Pick any color except current target
+    const others=FS_PALETTE.map((_,i)=>i).filter(i=>i!==FS.targetIdx);
+    colIdx=others[Math.floor(Math.random()*others.length)];
+  }
+  FS.dots.push({x,y:-r*2,r,spd,colIdx,isTarget,hit:false,result:null,born:ts});
+}
+
+function fsTap(tx,ty,W,H){
+  if(FS.shifting) return; // brief lock during color-shift flash
+  for(let i=FS.dots.length-1;i>=0;i--){
+    const d=FS.dots[i];
+    if(d.hit) continue;
+    if(Math.hypot(tx-d.x,ty-d.y)<d.r+16){
+      d.hit=true;FS.total++;
+      if(d.isTarget){
+        d.result='ok';FS.correct++;FS.hitsOnTarget++;
+        flash('ok');
+        // Every 3 correct → shift color
+        if(FS.hitsOnTarget>=3){
+          FS.hitsOnTarget=0;
+          triggerShift();
+        }
+      } else {
+        d.result='err';
+        flash('err');
+      }
+      const pct=Math.round(FS.correct/FS.total*100);
+      document.getElementById('sv-f').textContent=pct+'%';
+      return;
+    }
+  }
+}
+
+function triggerShift(){
+  // Pick a new target color (different from current)
+  const others=FS_PALETTE.map((_,i)=>i).filter(i=>i!==FS.targetIdx);
+  FS.targetIdx=others[Math.floor(Math.random()*others.length)];
+  FS.shifting=true;
+  FS.shiftTs=performance.now();
+  // Lift shift lock after short animation
+  setTimeout(()=>{FS.shifting=false;},800);
+}
+
+function fsLoop(ts,ctx,W,H){
+  ctx.clearRect(0,0,W,H);
+
+  // Spawn rate
+  if(ts-FS.lastSpawn>420){
+    fsSpawnDot(W,H,ts);
+    FS.lastSpawn=ts;
+  }
+
+  // Cleanup off-screen or old hit dots
+  FS.dots=FS.dots.filter(d=>{
+    if(d.hit && ts-d.born>500) return false;
+    if(d.y>H+d.r*3) return false;
+    return true;
+  });
+
+  // Move dots
+  const dt=1/60;
+  for(const d of FS.dots){
+    if(!d.hit) d.y+=d.spd*dt;
+  }
+
+  // ── TARGET COLOR INDICATOR (top bar) ──
+  const tgt=FS_PALETTE[FS.targetIdx];
+  const shiftAge=ts-FS.shiftTs;
+  const isShifting=FS.shifting||(shiftAge<900&&shiftAge>0);
+
+  // Background flash on shift
+  if(isShifting){
+    const alpha=Math.max(0,0.18*(1-shiftAge/900));
+    ctx.fillStyle=tgt.col;ctx.globalAlpha=alpha;
+    ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=1;
+  }
+
+  // Top indicator band
+  const bandH=72;
+  ctx.fillStyle='#F2F2F0';
+  ctx.fillRect(0,0,W,bandH);
+
+  // Progress dots showing hits toward shift (3 hits)
+  const dotSpacing=16;
+  const totalDots=3;
+  const dotsW=(totalDots-1)*dotSpacing;
+  const dotsStartX=W/2-dotsW/2;
+
+  ctx.font=`400 8px "Courier Prime"`;
+  ctx.fillStyle='#909090';ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('TOCA SOLO',W/2,8);
+
+  // Big color swatch
+  const swatchSize=26;
+  const swatchX=W/2-swatchSize/2;
+  const swatchY=18;
+
+  if(isShifting){
+    // Pulsing ring to signal change
+    const pulse=(Math.sin(ts/80)+1)/2;
+    ctx.beginPath();ctx.arc(W/2,swatchY+swatchSize/2,swatchSize/2+4+pulse*4,0,Math.PI*2);
+    ctx.strokeStyle=tgt.col;ctx.lineWidth=2;ctx.globalAlpha=0.5;ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+
+  ctx.beginPath();ctx.arc(W/2,swatchY+swatchSize/2,swatchSize/2,0,Math.PI*2);
+  ctx.fillStyle=tgt.col;ctx.fill();
+
+  // Progress dots (hits toward next shift)
+  for(let i=0;i<totalDots;i++){
+    const px=dotsStartX+i*dotSpacing;
+    const py=bandH-12;
+    ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);
+    ctx.fillStyle=i<FS.hitsOnTarget?tgt.col:'#AAAAAA';
+    ctx.fill();
+  }
+
+  // Separator
+  ctx.fillStyle='#EBEBEB';
+  ctx.fillRect(0,bandH,W,1);
+
+  // ── DOTS ──
+  for(const d of FS.dots){
+    const dc=FS_PALETTE[d.colIdx];
+    const col=d.result==='ok'?'#1A9952':d.result==='err'?'#D94030':dc.col;
+    const alpha=d.hit?Math.max(0,1-(ts-d.born)/400):1;
+    ctx.save();
+    ctx.globalAlpha=alpha;
+    ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+    ctx.fillStyle=col;ctx.fill();
+
+    // Hit ring
+    if(d.hit&&d.result==='ok'){
+      const age=ts-d.born;
+      ctx.beginPath();ctx.arc(d.x,d.y,d.r+age/12,0,Math.PI*2);
+      ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.globalAlpha=alpha*0.4;ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ── SHIFT OVERLAY TEXT ──
+  if(isShifting&&shiftAge<600){
+    const a=Math.max(0,1-shiftAge/600);
+    ctx.globalAlpha=a;
+    ctx.font=`900 48px "Bebas Neue"`;
+    ctx.fillStyle=tgt.col;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('¡CAMBIO!',W/2,H*0.52);
+    ctx.font=`700 14px "Courier Prime"`;
+    ctx.fillStyle='#080808';
+    ctx.fillText(tgt.name,W/2,H*0.52+40);
+    ctx.globalAlpha=1;
+  }
+
+  if(FS.active) RAF=requestAnimationFrame(ts=>fsLoop(ts,ctx,W,H));
+}
+
+function endFilter(){
+  clearInterval(INTERVAL);raf_stop();FS.active=false;
+  remTC(document.getElementById('cv-f'));
+  STATE.scores.filter=FS.total>0?Math.round(FS.correct/FS.total*100):0;
+  markDone('filter');
+}
+
+/* ════════════════════════════
+   RESULTS
+════════════════════════════ */
+function showResults(){
+  if(STATE.done.size<4) return;
+  show('results');
+
+  const sv=STATE.scores.visual;
+  const sr=STATE.scores.reaction;
+  const sc=STATE.scores.cognitive;
+  const sf=STATE.scores.filter;
+
+  const rtScore=Math.max(0,Math.min(100,Math.round((400-sr)/2.5)));
+  const idx=Math.round(sv*1.0+rtScore*0.35+sc*0.35+sf*0.3);
+  const final=Math.min(100,idx);
+
+  document.getElementById('r-score').textContent=final;
+  document.getElementById('r-eyebrow').textContent=
+    final>=80?'SISTEMA ACTIVO':final>=60?'CALIBRACIÓN PARCIAL':'RECOMENDADO: RE-CALIBRAR';
+  document.getElementById('r-verdict').textContent=
+    final>=80?'ENTRA A LA PISTA':final>=60?'Protocolo aceptable — considera respirar':'Usa el protocolo de ajuste respiratorio';
+
+  document.getElementById('r1').textContent=sv;
+  document.getElementById('r2').textContent=sr<900?sr+'ms':'—';
+  document.getElementById('r3').textContent=sc+'%';
+  document.getElementById('r4').textContent=sf+'%';
+
+  setTimeout(()=>{
+    document.getElementById('r-fill').style.width=final+'%';
+    document.getElementById('r-pct').textContent=final+'%';
+  },400);
+}
+
+/* ════════════════════════════
+   BREATHING ENGINE
+════════════════════════════ */
+const BREATH_PROTOCOLS={
+  activation:{
+    name:'IGNICIÓN',
+    tag:'ACTIVACIÓN SIMPÁTICA',
+    col:'#D4541C',
+    cycles:15,
+    phases:[
+      {label:'INHALA',dur:2.5,type:'in'},
+      {label:'EXHALA',dur:1.5,type:'out'}
+    ],
+    note:'Ritmo controlado — activa sin hiperventilar'
+  },
+  regulation:{
+    name:'FRENO VAGAL',
+    tag:'REGULACIÓN PARASIMPÁTICA',
+    col:'#1E7A52',
+    cycles:6,
+    phases:[
+      {label:'INHALA',dur:4,type:'in'},
+      {label:'SOSTÉN',dur:4,type:'hold'},
+      {label:'EXHALA',dur:7,type:'out'}
+    ],
+    note:'Exhala larga — activa nervio vago'
+  }
+};
+
+let BSTATE={type:null,cycle:0,phaseIdx:0,elapsed:0,running:false,animFrame:null,lastTs:null};
+
+let BREATH_ORIGIN='breath-menu';
+
+function launchBreath(type, origin){
+  BREATH_ORIGIN=origin||'breath-menu';
+  const p=BREATH_PROTOCOLS[type];
+  BSTATE={type,cycle:0,phaseIdx:0,elapsed:0,running:false,animFrame:null,lastTs:null};
+
+  document.getElementById('btype-tag').textContent=p.tag;
+  document.getElementById('bname').textContent=p.name;
+  document.getElementById('bcycles').textContent=`0 / ${p.cycles} CICLOS`;
+  document.getElementById('bphase').textContent='—';
+  document.getElementById('bcount').textContent='—';
+  document.getElementById('bstart').style.display='block';
+  document.getElementById('bdone').style.display='none';
+
+  // Ring color
+  document.getElementById('bring').style.stroke=p.col;
+  document.getElementById('bring').style.strokeDashoffset='565';
+
+  show('breath');
+}
+
+function beginBreath(){
+  document.getElementById('bstart').style.display='none';
+  BSTATE.running=true;
+  BSTATE.lastTs=performance.now();
+  BSTATE.animFrame=requestAnimationFrame(breathLoop);
+}
+
+function breathLoop(ts){
+  if(!BSTATE.running) return;
+  const p=BREATH_PROTOCOLS[BSTATE.type];
+  const dt=(ts-BSTATE.lastTs)/1000;
+  BSTATE.lastTs=ts;
+  BSTATE.elapsed+=dt;
+
+  const phase=p.phases[BSTATE.phaseIdx];
+  const phasePct=Math.min(1,BSTATE.elapsed/phase.dur);
+  const remaining=Math.ceil(phase.dur-BSTATE.elapsed);
+
+  // Update phase label and countdown
+  document.getElementById('bphase').textContent=phase.label;
+  document.getElementById('bcount').textContent=remaining>0?remaining:'';
+
+  const ring=document.getElementById('bring');
+
+  if(phase.type==='hold'){
+    // HOLD: ring stays FULL — pulsing opacity to signal "retention"
+    ring.style.strokeDashoffset='0';
+    // Smooth sinusoidal pulse: oscillates between 0.4 and 1.0 opacity
+    const pulse=0.4+0.6*((Math.sin(ts/400)+1)/2);
+    ring.style.opacity=pulse;
+    // Countdown shown clearly
+    document.getElementById('bcount').textContent=remaining>0?remaining:'';
+  } else if(phase.type==='in'){
+    // INHALE: ring fills progressively 0→full
+    ring.style.opacity='1';
+    ring.style.strokeDashoffset=565*(1-phasePct);
+  } else {
+    // EXHALE: ring empties full→0
+    ring.style.opacity='1';
+    ring.style.strokeDashoffset=565*phasePct;
+  }
+
+  // Next phase
+  if(BSTATE.elapsed>=phase.dur){
+    BSTATE.elapsed=0;
+    ring.style.opacity='1';
+    BSTATE.phaseIdx++;
+    if(BSTATE.phaseIdx>=p.phases.length){
+      BSTATE.phaseIdx=0;
+      BSTATE.cycle++;
+      document.getElementById('bcycles').textContent=
+        `${BSTATE.cycle} / ${p.cycles} CICLOS`;
+      if(BSTATE.cycle>=p.cycles){
+        breathDone();return;
+      }
+    }
+  }
+
+  BSTATE.animFrame=requestAnimationFrame(breathLoop);
+}
+
+function breathDone(){
+  BSTATE.running=false;
+  document.getElementById('bphase').textContent='✓';
+  document.getElementById('bcount').textContent='';
+  document.getElementById('bdone').style.display='block';
+  document.getElementById('bring').style.strokeDashoffset='0';
+}
+
+/* ════════════════════════════
+   RESET
+════════════════════════════ */
+function resetAll(){
+  clearInterval(INTERVAL);raf_stop();
+  if(BSTATE.animFrame){cancelAnimationFrame(BSTATE.animFrame);BSTATE.animFrame=null;}
+  VB.active=false;RT.active=false;RD.active=false;
+  STATE.done.clear();
+  STATE.scores={visual:0,reaction:0,cognitive:0,filter:0};
+  STATE.pending=null;
+
+  ['visual','reaction','cognitive','filter'].forEach(m=>{
+    document.getElementById('card-'+m).classList.remove('done');
+    document.getElementById('pd-'+m).classList.remove('done');
+  });
+  document.getElementById('home-start-btn').classList.remove('ready');
+  document.getElementById('r-fill').style.width='0%';
+  show('home');
+}
+</script>
+</body>
+</html>
