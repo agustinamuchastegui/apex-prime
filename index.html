@@ -501,6 +501,7 @@ html,body{
   -webkit-overflow-scrolling:touch;
   display:flex;
   flex-direction:column;
+  align-items:flex-start;
 }
 
 .bmenu-back{
@@ -553,11 +554,10 @@ html,body{
 
 .bmenu-cards{
   width:100%;
-  padding:0 28px 40px;
+  padding:16px 28px 56px;
   display:flex;flex-direction:column;
-  gap:10px;
-  flex:1;
-  justify-content:center;
+  gap:12px;
+  flex-shrink:0;
 }
 
 .bmenu-card{
@@ -1442,22 +1442,35 @@ function startCognitive(){
   rdRound(ctx,W,H);
 }
 
+// Rules: +1, +2, -1, -2
+const RD_RULES=[
+  {delta:+1, label:'+ 1', desc:'SIGUIENTE'},
+  {delta:+2, label:'+ 2', desc:'SUMA DOS'},
+  {delta:-1, label:'− 1', desc:'ANTERIOR'},
+  {delta:-2, label:'− 2', desc:'RESTA DOS'},
+];
+
 function rdRound(ctx,W,H){
   if(!RD.active) return;
   RD.phase='show';
-  // Show a digit 1-9
+  // Pick random rule each round
+  const rule=RD_RULES[Math.floor(Math.random()*RD_RULES.length)];
+  RD.rule=rule;
   const n=1+Math.floor(Math.random()*9);
   RD.shown=n;
-  // Correct answer = n+1 (9 wraps to 1) — inhibit the obvious match
-  const correct=n===9?1:n+1;
+  // Apply rule with wrap 1-9
+  let correct=n+rule.delta;
+  if(correct>9) correct-=9;
+  if(correct<1) correct+=9;
   RD.target=correct;
-  // Options: include BOTH the shown number (trap) and correct + 2 others
-  const others=[];
-  while(others.length<2){
+  // Options: correct + shown (trap if different) + 2 others
+  const pool=new Set([correct]);
+  if(n!==correct) pool.add(n); // trap
+  while(pool.size<4){
     const w=1+Math.floor(Math.random()*9);
-    if(w!==correct&&w!==n&&!others.includes(w)) others.push(w);
+    pool.add(w);
   }
-  RD.opts=[correct,n,...others].sort(()=>Math.random()-0.5);
+  RD.opts=[...pool].sort(()=>Math.random()-0.5);
   rdRender(ctx,W,H);
 
   rdH=setTimeout(()=>{
@@ -1470,23 +1483,30 @@ function rdRound(ctx,W,H){
 function rdRender(ctx,W,H){
   ctx.clearRect(0,0,W,H);
   if(RD.phase==='show'){
-    // Huge digit — pure flash, no text
-    ctx.font=`900 220px "Bebas Neue"`;
+    const rule=RD.rule||RD_RULES[0];
+    // Big digit
+    ctx.font=`900 200px "Bebas Neue"`;
     ctx.fillStyle='#080808';
     ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(RD.shown,W/2,H*0.45);
-    // Subtle rule bottom
-    ctx.font=`700 9px "Courier Prime"`;
+    ctx.fillText(RD.shown,W/2,H*0.40);
+    // Rule label — big and clear
+    ctx.font=`900 52px "Bebas Neue"`;
+    ctx.fillStyle='#C8001A';
+    ctx.textBaseline='middle';
+    ctx.fillText(rule.label,W/2,H*0.72);
+    // Rule desc — small
+    ctx.font=`400 10px "Courier Prime"`;
     ctx.fillStyle='#AAAAAA';
-    ctx.textBaseline='bottom';
-    ctx.fillText('+1',W/2,H-20);
+    ctx.textBaseline='middle';
+    ctx.fillText(rule.desc,W/2,H*0.84);
 
   } else {
     // Compact cue top
+    const _rule=RD.rule||RD_RULES[0];
     ctx.font=`900 11px "Courier Prime"`;
     ctx.fillStyle='#AAAAAA';
     ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('VISTE  ' + RD.shown + '  →  SIGUIENTE',W/2,16);
+    ctx.fillText('VISTE  ' + RD.shown + '  →  ' + _rule.label.replace('−','-'),W/2,16);
 
     const bW=(W-40)/2-6, bH=92;
     const gapX=12, gapY=12;
@@ -1522,9 +1542,10 @@ function rdTap(tx,ty,W,H,ctx){
       document.getElementById('sv-c').textContent=pct+'%';
       // Highlight — show both trap and correct
       ctx.clearRect(0,0,W,H);
+      const _r=RD.rule||RD_RULES[0];
       ctx.font=`900 11px "Courier Prime"`;
       ctx.fillStyle='#AAAAAA';ctx.textAlign='center';ctx.textBaseline='top';
-      ctx.fillText('VISTE  ' + RD.shown + '  →  SIGUIENTE',W/2,16);
+      ctx.fillText('VISTE  ' + RD.shown + '  →  ' + _r.label.replace('−','-'),W/2,16);
       for(const b of RD.btns){
         const isChosen=b===btn;
         const isCorrect=b.opt===RD.target;
